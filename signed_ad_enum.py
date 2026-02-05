@@ -6,12 +6,26 @@ USER = "<USER>"
 PASSWORD = "<PASSWORD>"
 USERS_FILE = "<FILE>"
 
+# Grupos conocidos que en AD NO son usuarios aunque tengan RID alto
+KNOWN_GROUPS = {
+    "DnsAdmins",
+    "DnsUpdateProxy",
+    "Enterprise Read-only Domain Controllers",
+    "Allowed RODC Password Replication Group",
+    "Denied RODC Password Replication Group",
+    "IT",
+    "HR",
+    "Finance",
+    "Developers",
+    "Support"
+}
+
 
 def ejecutar_nxc(nombre):
     cmd = (
         f"nxc mssql {TARGET} "
         f"-u '{USER}' -p '{PASSWORD}' "
-        f"-q \"select SUSER_SID('{nombre}');\""
+        f"-q \"SELECT SUSER_SID('{nombre}');\""
     )
 
     salida = subprocess.getoutput(cmd)
@@ -50,10 +64,16 @@ def convertir_sid(hex_sid):
 
 def detectar_tipo(nombre, rid):
     """
-    Determina si es User, Group o Computer
+    Determina si el objeto es USER, GROUP o COMPUTER
+    usando heurísticas (sin LDAP)
     """
-    if nombre.endswith("$"):
+    base = nombre.split("\\")[-1]
+
+    if base.endswith("$"):
         return "COMPUTER"
+
+    if base in KNOWN_GROUPS:
+        return "GROUP"
 
     if rid < 1000:
         return "GROUP"
