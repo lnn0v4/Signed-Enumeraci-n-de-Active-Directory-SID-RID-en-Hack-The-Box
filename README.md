@@ -1,4 +1,5 @@
-# Signed-Enumeraci-n-de-Active-Directory-SID-RID-en-Hack-The-Box
+# Signed-AD-SID-RID-Enumeration
+
 📌 Descripción
 
 Este script en Python3 fue desarrollado como parte de la máquina Signed de Hack The Box. Su objetivo es enumerar objetos de Active Directory a través de MSSQL, obteniendo el SID, el RID y determinando si cada objeto corresponde a un User, Group o Computer.
