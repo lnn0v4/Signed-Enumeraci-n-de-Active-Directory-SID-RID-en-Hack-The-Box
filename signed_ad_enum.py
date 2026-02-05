@@ -6,20 +6,6 @@ USER = "<USER>"
 PASSWORD = "<PASSWORD>"
 USERS_FILE = "<FILE>"
 
-# Grupos conocidos que en AD NO son usuarios aunque tengan RID alto
-KNOWN_GROUPS = {
-    "DnsAdmins",
-    "DnsUpdateProxy",
-    "Enterprise Read-only Domain Controllers",
-    "Allowed RODC Password Replication Group",
-    "Denied RODC Password Replication Group",
-    "IT",
-    "HR",
-    "Finance",
-    "Developers",
-    "Support"
-}
-
 
 def ejecutar_nxc(nombre):
     cmd = (
@@ -64,17 +50,19 @@ def convertir_sid(hex_sid):
 
 def detectar_tipo(nombre, rid):
     """
-    Determina si el objeto es USER, GROUP o COMPUTER
-    usando heurísticas (sin LDAP)
+    USER / GROUP / COMPUTER
+    Solo heurística básica
     """
     base = nombre.split("\\")[-1]
 
+    # Computer
     if base.endswith("$"):
         return "COMPUTER"
 
-    if base in KNOWN_GROUPS:
-        return "GROUP"
+    if base == "Administrator" or base == "Guest" or base == "krbtgt":
+        return "USER"
 
+    # Regla general de AD
     if rid < 1000:
         return "GROUP"
 
@@ -112,4 +100,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
