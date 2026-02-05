@@ -13,7 +13,6 @@ def ejecutar_nxc(nombre):
         f"-u '{USER}' -p '{PASSWORD}' "
         f"-q \"SELECT SUSER_SID('{nombre}');\""
     )
-
     salida = subprocess.getoutput(cmd)
 
     if "b'" not in salida:
@@ -27,14 +26,12 @@ def ejecutar_nxc(nombre):
 
 def convertir_sid(hex_sid):
     data = bytes.fromhex(hex_sid)
-
     revision = data[0]
     subauth_count = data[1]
     authority = int.from_bytes(data[2:8], "big")
 
     subauths = []
     offset = 8
-
     for _ in range(subauth_count):
         sub = int.from_bytes(data[offset:offset + 4], "little")
         subauths.append(sub)
@@ -50,23 +47,29 @@ def convertir_sid(hex_sid):
 
 def detectar_tipo(nombre, rid):
     """
-    USER / GROUP / COMPUTER
-    Solo heurística básica
+    Determina si el objeto es USER, GROUP o COMPUTER
+    usando heurísticas sin LDAP
     """
     base = nombre.split("\\")[-1]
 
-    # Computer
+    # Usuarios que siempre son USER
+    if base in {"Administrator", "Guest", "krbtgt"} or base.endswith("svc"):
+        return "USER"
+
+    # Computadoras
     if base.endswith("$"):
         return "COMPUTER"
 
-    if base == "Administrator" or base == "Guest" or base == "krbtgt":
-        return "USER"
-
-    # Regla general de AD
+    # RID < 1000 → grupos del sistema
     if rid < 1000:
         return "GROUP"
 
-    return "USER"
+    # Cuentas con punto en el nombre → USER
+    if "." in base:
+        return "USER"
+
+    # Todo lo demás → GROUP
+    return "GROUP"
 
 
 def procesar_objeto(nombre):
@@ -76,7 +79,6 @@ def procesar_objeto(nombre):
 
     sid, rid = convertir_sid(hex_sid)
     tipo = detectar_tipo(nombre, rid)
-
     return sid, rid, tipo
 
 
