@@ -24,17 +24,19 @@ La detección del tipo de objeto se realiza de forma sencilla y efectiva:
 
 ▶️ Ejecución
 
+```bash
 python3 signed_sid_enum.py
+```
 
 
-Salida de ejemplo:
-
+📤 Salida de ejemplo
+```text
 NAME                                TYPE       SID                                                          RID
 ------------------------------------------------------------------------------------------------------------------------
 SIGNED\Domain Admins                GROUP      S-1-5-21-4088429403-1159899800-2753317549-512                512
 SIGNED\DC01$                        COMPUTER   S-1-5-21-4088429403-1159899800-2753317549-1000               1000
-SIGNED\john.doe                     USER       S-1-5-21-4088429403-1159899800-27533175
-
+SIGNED\john.doe                     USER       S-1-5-21-4088429403-1159899800-2753317549-1110               1110
+```
 
 
 
