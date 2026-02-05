@@ -5,22 +5,24 @@ Este script en Python3 fue desarrollado como parte de la máquina Signed de Hack
 El script se apoya en nxc (NetExec) para consultar el SID asociado a un nombre de cuenta y luego realiza el parseo manual del SID, sin utilizar librerías externas, con fines educativos.
 ⚙️ ¿Qué hace el script?
 
-*Ejecuta consultas MSSQL autenticadas usando nxc
-*Extrae el SID en formato hexadecimal
-*Convierte el SID hexadecimal a formato legible (S-1-5-21-...)
-*Obtiene el RID (Relative Identifier)
-*Clasifica el objeto como:
--USER
--GROUP
--COMPUTER
-*Muestra los resultados en una tabla clara por consola
+- Ejecuta consultas MSSQL autenticadas usando `nxc`
+- Extrae el SID en formato hexadecimal
+- Convierte el SID hexadecimal a formato legible (`S-1-5-21-...`)
+- Obtiene el RID (Relative Identifier)
+- Clasifica el objeto como:
+  - USER
+  - GROUP
+  - COMPUTER
+- Muestra los resultados en una tabla clara por consola
+
 
 🧠 Lógica de clasificación
-
 La detección del tipo de objeto se realiza de forma sencilla y efectiva:
--Si el nombre termina en $ → COMPUTER
--Si el RID es menor a 1000 → GROUP
--En cualquier otro caso → USER
+
+- Si el nombre termina en `$` → **COMPUTER**
+- Si el RID es menor a `1000` → **GROUP**
+- En cualquier otro caso → **USER**
+
 
 ▶️ Ejecución
 
